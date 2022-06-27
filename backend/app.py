@@ -1,4 +1,4 @@
-import json
+import re
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime, timezone
@@ -30,6 +30,24 @@ class PlateSchema(ma.Schema):
 plate_schema = PlateSchema()
 plates_schema = PlateSchema(many=True)
 
+def malformed(data):
+    if data['start_date'] != '':
+        try:
+            datetime.strptime(data['start_date'], '%Y-%m-%dT%H:%M:%SZ')
+        except ValueError:
+            return True
+
+    if data['end_date'] != '':
+        try:
+            datetime.strptime(data['end_date'], '%Y-%m-%dT%H:%M:%SZ')
+        except ValueError:
+            return True
+
+    if re.search("^[A-Z]{1,3}-[A-Z]{1,2}((?!0)[0-9]{0,4})$", data['plate']):
+        return False
+    else:
+        return True
+    
 class PlateResource(Resource):
     def get(self):
         plates = Plate.query.all()
@@ -43,9 +61,14 @@ class PlateResource(Resource):
             start_date=data['start_date'],
             end_date=data['end_date']
         )
-        db.session.add(new_plate),
-        db.session.commit(),
-        return plate_schema.dump(new_plate)
+        try:
+            db.session.add(new_plate),
+            db.session.commit(),
+            if malformed(data):
+                return 'malformed', 402
+            return plate_schema.dump(new_plate), 200
+        except Exception as e:
+            return f'error: {e}', 400
 
 api.add_resource(PlateResource, '/plate')
 
