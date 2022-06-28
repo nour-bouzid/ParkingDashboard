@@ -5,12 +5,15 @@ from datetime import datetime, timezone
 from collections import defaultdict
 from flask_marshmallow import Marshmallow
 from flask_restful import Api, Resource
+from flask_cors import CORS
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 db = SQLAlchemy(app)
 ma = Marshmallow(app) 
 api = Api(app)
+CORS(app, resources={r"/*":{'origins':"*"}})
+CORS(app, resources={r"/*":{'origins':'http://localhost:5000',"allow_headers":"Access-Control-Allow-Origin"}})
 
 class Plate(db.Model):
     plate = db.Column(db.String(10), primary_key=True)
