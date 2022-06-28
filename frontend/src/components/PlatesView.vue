@@ -4,38 +4,38 @@
     <legend>Add New Plate</legend>
     <div class="form-group">
       <label class="form-label mt-4">Plate</label>
-      <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter Plate">
+      <input v-model="form.plate" type="text" class="form-control" placeholder="Enter Plate">
     </div>
 
     <div class="form-group">
       <label class="form-label mt-4">Owner</label>
-      <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter Plate">
+      <input v-model="form.owner" type="text" class="form-control" placeholder="Enter Owner">
     </div>
 
     <div class="form-group">
       <label class="form-label mt-4">Start date</label>
-      <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter Plate">
+      <input v-model="form.startDate" type="text" class="form-control" placeholder="Enter Start Date">
     </div>
 
     <div class="form-group">
       <label class="form-label mt-4">End date</label>
-      <input type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter Plate">
+      <input v-model="form.endDate" type="text" class="form-control"  placeholder="Enter End Date">
     </div>
 
-    <button type="submit" class="btn btn-primary mt-4">Submit</button>
+    <button type="submit" class="btn btn-primary mt-4" @click="onSubmit">Submit</button>
   </div>
   <div class="separator">
   </div>
   <div class="wrapper-items">
     <legend>Plates</legend>
     <div class="list-group">
-      <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="#" v-for="plate in plates" :key="plate.plate" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1">List group item heading</h5>
+          <h5 class="mb-1">{{plate.plate}}</h5>
         </div>
-        <p class="mb-1">Owner:</p>
-        <p class="mb-1">Start Date:</p>
-        <p class="mb-1">End Date:</p>
+        <p class="mb-1">Owner: {{plate.owner}}</p>
+        <p class="mb-1">Start Date: {{plate.start_date}}</p>
+        <p class="mb-1">End Date: {{plate.end_date}}</p>
       </a>
     </div>
   </div>
@@ -43,8 +43,39 @@
 </template>
 
 <script>
+import axios from 'axios'
 export default {
   name: 'PlatesView',
+  data() {
+    return {
+      plates: [],
+      form: {
+        plate: '',
+        owner: '',
+        startDate: '',
+        endDate: '',
+      }
+    }
+  },
+  async mounted(){
+    try {
+      const res = await axios.get('http://localhost:5000/plate');
+      this.plates = res.data;
+      console.log('get response', res.data)
+    } catch (err) {
+      console.error(err)
+    }
+  },
+  methods: {
+    async onSubmit(){
+      try {
+        const resp = await axios.post('http://localhost:5000/plate', JSON.parse(JSON.stringify(this.form)));
+        console.log(resp.data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
 }
 </script>
 
