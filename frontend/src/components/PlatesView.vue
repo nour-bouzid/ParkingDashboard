@@ -28,8 +28,11 @@
   </div>
   <div class="wrapper-items">
     <legend>Plates</legend>
+    <form class="d-flex">
+        <input class="form-control me-sm-2" v-model="search" type="text" placeholder="Search">
+    </form>
     <div class="list-group">
-      <a href="#" v-for="plate in plates" :key="plate.plate" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="#" v-for="plate in filteredList" :key="plate.plate" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1">{{plate.plate}}</h5>
         </div>
@@ -54,6 +57,7 @@ export default {
   data() {
     return {
       plates: [],
+      search: '',
       form: {
         plate: '',
         owner: '',
@@ -69,6 +73,14 @@ export default {
       console.log('get response', res.data)
     } catch (err) {
       console.error(err)
+    }
+  },
+  computed: {
+    filteredList() {
+      return this.plates.filter(plate => {
+        return (plate.plate.toLowerCase().includes(this.search.toLowerCase()) 
+        || plate.owner.toLowerCase().includes(this.search.toLowerCase()))
+      })
     }
   },
   methods: {
