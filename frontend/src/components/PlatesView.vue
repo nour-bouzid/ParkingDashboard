@@ -11,15 +11,15 @@
       <label class="form-label mt-4">Owner</label>
       <input v-model="form.owner" type="text" class="form-control" placeholder="Enter Owner">
     </div>
-
+  
     <div class="form-group">
       <label class="form-label mt-4">Start date</label>
-      <input v-model="form.startDate" type="text" class="form-control" placeholder="Enter Start Date">
+      <datepicker v-model="form.startDate"  placeholder="Enter Start Date"/>
     </div>
 
     <div class="form-group">
       <label class="form-label mt-4">End date</label>
-      <input v-model="form.endDate" type="text" class="form-control"  placeholder="Enter End Date">
+      <datepicker v-model="form.endDate"  placeholder="Enter End Date"/>
     </div>
 
     <button type="submit" class="btn btn-primary mt-4" @click="onSubmit">Submit</button>
@@ -43,17 +43,22 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from 'axios';
+import Datepicker from 'vuejs-datepicker';
+
 export default {
   name: 'PlatesView',
+  components: {
+    Datepicker
+  },
   data() {
     return {
       plates: [],
       form: {
         plate: '',
         owner: '',
-        startDate: '',
-        endDate: '',
+        start_date: new Date(),
+        end_date: new Date(),
       }
     }
   },
@@ -68,6 +73,9 @@ export default {
   },
   methods: {
     async onSubmit(){
+      this.form.start_date = this.form.start_date.toISOString().split('.')[0]+"Z"
+      this.form.end_date = this.form.end_date.toISOString().split('.')[0]+"Z"
+      console.log(JSON.parse(JSON.stringify(this.form)))
       try {
         const resp = await axios.post('http://localhost:5000/plate', JSON.parse(JSON.stringify(this.form)));
         console.log(resp.data);
