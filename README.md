@@ -1,4 +1,4 @@
-# Plates Digital Management systme
+# Plates Digital Management
 
 ## Backend
 
