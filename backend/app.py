@@ -38,17 +38,20 @@ def malformed(data):
         try:
             datetime.strptime(data['start_date'], '%Y-%m-%dT%H:%M:%SZ')
         except ValueError:
+            print('start Date malformed')
             return True
 
     if data['end_date'] != '':
         try:
             datetime.strptime(data['end_date'], '%Y-%m-%dT%H:%M:%SZ')
         except ValueError:
+            print('end Date malformed')
             return True
 
     if re.search("^[A-Z]{1,3}-[A-Z]{1,2}((?!0)[0-9]{0,4})$", data['plate']):
         return False
     else:
+        print('Plate malformed')
         return True
     
 class PlateResource(Resource):
