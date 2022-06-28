@@ -14,12 +14,12 @@
   
     <div class="form-group">
       <label class="form-label mt-4">Start date</label>
-      <datepicker v-model="form.startDate"  placeholder="Enter Start Date"/>
+      <datepicker v-model="form.start_date"  placeholder="Enter Start Date"/>
     </div>
 
     <div class="form-group">
       <label class="form-label mt-4">End date</label>
-      <datepicker v-model="form.endDate"  placeholder="Enter End Date"/>
+      <datepicker v-model="form.end_date"  placeholder="Enter End Date"/>
     </div>
 
     <button type="submit" class="btn btn-primary mt-4" @click="onSubmit">Submit</button>
@@ -31,6 +31,14 @@
     <form class="d-flex">
         <input class="form-control me-sm-2" v-model="search" type="text" placeholder="Search">
     </form>
+    <button type="button" @click="sortAlpha('plate')" class="btn btn-primary">By Plate (A-Z)</button>
+    <button type="button" @click="sortAlphaZ('plate')" class="btn btn-primary">By Plate (Z-A)</button>
+    <button type="button" @click="sortAlpha('owner')" class="btn btn-primary">By Owner (A-Z)</button>
+    <button type="button" @click="sortAlphaZ('owner')" class="btn btn-primary">By Owner (Z-A)</button>
+    <button type="button" @click="sortByDateNew('start')" class="btn btn-primary">Created newest</button>
+    <button type="button" @click="sortByDateOld('start')" class="btn btn-primary">Created oldest</button>
+    <button type="button" @click="sortByDateNew('end')" class="btn btn-primary">Expires newest</button>
+    <button type="button" @click="sortByDateOld('start')" class="btn btn-primary">Expires oldest</button>
     <div class="list-group">
       <a href="#" v-for="plate in filteredList" :key="plate.plate" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
@@ -93,6 +101,82 @@ export default {
         console.log(resp.data);
       } catch (err) {
         console.error(err);
+      }
+    },
+    sortAlphaZ(value){
+      if (value == 'owner'){
+      this.plates.sort(function(a, b) {
+        var x = a.owner.toLowerCase();
+        var y = b.owner.toLowerCase();
+        if (y < x) {
+          return -1;
+        }
+        if (y > x) {
+          return 1;
+        }
+        return 0;
+      });
+      } else {
+        this.plates.sort(function(a, b) {
+        var x = a.plate.toLowerCase();
+        var y = b.plate.toLowerCase();
+        if (y < x) {
+          return -1;
+        }
+        if (y > x) {
+          return 1;
+        }
+        return 0;
+      });
+    }
+    },
+    sortAlpha(value){
+      if (value == 'owner'){
+      this.plates.sort(function(a, b) {
+        var x = a.owner.toLowerCase();
+        var y = b.owner.toLowerCase();
+        if (x < y) {
+          return -1;
+        }
+        if (x > y) {
+          return 1;
+        }
+        return 0;
+      });
+      } else {
+        this.plates.sort(function(a, b) {
+        var x = a.plate.toLowerCase();
+        var y = b.plate.toLowerCase();
+        if (x < y) {
+          return -1;
+        }
+        if (x > y) {
+          return 1;
+        }
+        return 0;
+      });
+      }
+    },
+    sortByDateNew(value){
+      if (value == 'start'){
+        this.plates.sort(function(a, b) {
+        return new Date(a.start_date) - new Date(b.start_date);
+      });
+      } else {
+        this.plates.sort(function(a, b) {
+        return new Date(a.end_date) - new Date(b.end_date);
+      });
+      }
+    },
+    sortByDateOld(value){
+      if (value == 'start'){
+        this.plates.sort(function(a, b) {
+        return new Date(b.start_date) - new Date(a.start_date);
+      });
+      } else {
+        this.plates.sort(function(a, b) {
+        return new Date(b.end_date) - new Date(a.end_date);
+      });
       }
     }
   }
