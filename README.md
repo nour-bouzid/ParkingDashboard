@@ -10,4 +10,4 @@
 
 - Build image: `docker build -t plates-frontend .`
 - Run image: `docker run -d -p 8083:8080 plates-frontend`
-- View in: `localhost:8080`
+- View in: `localhost:8083`
